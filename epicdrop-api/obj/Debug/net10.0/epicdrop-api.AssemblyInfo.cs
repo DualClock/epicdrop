@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("epicdrop-api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e66e83614261fdd2ac7d75885d9da7857fad2e9d")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+101dc1aed3f1f72534d647ffc5949462caaade92")]
 [assembly: System.Reflection.AssemblyProductAttribute("epicdrop-api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("epicdrop-api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
