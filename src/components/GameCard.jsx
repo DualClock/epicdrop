@@ -1,44 +1,63 @@
 import './GameCard.css';
 
 const GameCard = ({ game }) => {
-  const triggerHaptic = () => {
+  const handleClick = () => {
+    // Вибрация при нажатии
     if (window.Telegram?.WebApp?.HapticFeedback) {
-      window.Telegram.WebApp.HapticFeedback.selectionChanged();
+      window.Telegram.WebApp.HapticFeedback.impactOccurred('medium');
     }
-  };
-
-  const handleOpen = () => {
-    triggerHaptic();
-    window.open(game.storeUrl, '_blank');
+    
+    // Открываем ссылку на игру
+    if (game.storeUrl) {
+      window.open(game.storeUrl, '_blank');
+    }
   };
 
   const formatDate = (dateString) => {
     if (!dateString) return 'Бессрочно';
+    
     const date = new Date(dateString);
     const now = new Date();
-    const diffDays = Math.ceil((date - now) / (1000 * 60 * 60 * 24));
+    const diffMs = date - now;
+    const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
     
     if (diffDays <= 0) return 'Заканчивается сегодня';
     if (diffDays === 1) return '1 день';
-    return `${diffDays} дн.`;
+    if (diffDays < 7) return `${diffDays} дн.`;
+    
+    return date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
+  };
+
+  const getStoreIcon = (store) => {
+    if (store?.toLowerCase() === 'steam') return '🎮';
+    if (store?.toLowerCase() === 'epic') return '';
+    return '🎁';
+  };
+
+  const getStoreName = (store) => {
+    return store || 'Unknown';
   };
 
   return (
-    <div className="game-card" onClick={handleOpen}>
+    <div className="game-card" onClick={handleClick}>
       <div className="card-image-wrapper">
         <img 
-          src={game.imageUrl || 'https://via.placeholder.com/400x200/302b63/ffffff?text=EasyDrop'} 
+          src={game.imageUrl || 'https://via.placeholder.com/400x200/1e293b/64748b?text=EasyDrop'} 
           alt={game.title}
           className="card-image"
+          onError={(e) => {
+            e.target.src = 'https://via.placeholder.com/400x200/1e293b/64748b?text=EasyDrop';
+          }}
         />
         <div className="card-overlay"></div>
         
         {/* Бейдж магазина */}
         <div className={`store-badge ${game.store?.toLowerCase() === 'steam' ? 'steam' : 'epic'}`}>
-          {game.store === 'Steam' ? '🎮 Steam' : '🎯 Epic'}
+          <span className="store-icon">{getStoreIcon(game.store)}</span>
+          <span className="store-name">{getStoreName(game.store)}</span>
         </div>
 
-        {/* Бейдж "БЕСПЛАТНО" */}
+        {/* Бейдж "FREE" */}
         <div className="free-badge">FREE</div>
       </div>
 
@@ -48,9 +67,10 @@ const GameCard = ({ game }) => {
         <div className="card-footer">
           <div className="timer-badge">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-              <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M12 6v6l4 2"/>
             </svg>
-            <span>Осталось: {formatDate(game.endDate)}</span>
+            <span>{formatDate(game.endDate)}</span>
           </div>
           
           <button className="claim-btn">Забрать</button>

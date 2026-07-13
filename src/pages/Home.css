@@ -1,42 +1,95 @@
-.home-container {
+.home {
   min-height: 100vh;
-  background: #0f0c29;
-  color: white;
-  font-family: 'Inter', sans-serif;
-  padding: 20px;
-  padding-bottom: 40px;
-}
-
-.home-header {
-  margin-bottom: 24px;
-}
-
-.home-header h1 {
-  font-size: 28px;
-  font-weight: 800;
-  margin: 0 0 8px 0;
-}
-
-.home-header p {
-  color: rgba(255, 255, 255, 0.6);
-  margin: 0;
-  font-size: 15px;
-}
-
-.tabs-container {
+  background: #0f172a;
+  color: #ffffff;
+  font-family: 'Inter', system-ui, sans-serif;
   display: flex;
-  gap: 12px;
-  margin-bottom: 24px;
-  overflow-x: auto;
-  padding-bottom: 4px;
+  flex-direction: column;
 }
 
-.tab-btn {
-  padding: 10px 20px;
-  border-radius: 16px;
+/* Хедер */
+.home-header {
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  gap: 12px;
+  background: rgba(15, 23, 42, 0.95);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.back-btn, .refresh-btn {
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #94a3b8;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.back-btn:active, .refresh-btn:active {
+  transform: scale(0.95);
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.refresh-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.spinning {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.header-content {
+  flex: 1;
+}
+
+.header-title {
+  font-family: 'Unbounded', system-ui, sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 4px 0;
+  color: #ffffff;
+}
+
+.header-subtitle {
+  font-size: 13px;
+  color: #64748b;
+  margin: 0;
+}
+
+/* Фильтры */
+.filters {
+  display: flex;
+  gap: 8px;
+  padding: 16px;
+  overflow-x: auto;
+  background: #0f172a;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.filter-btn {
+  padding: 10px 18px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   background: rgba(255, 255, 255, 0.05);
-  color: rgba(255, 255, 255, 0.7);
+  color: #94a3b8;
+  border-radius: 12px;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
@@ -44,25 +97,37 @@
   transition: all 0.2s;
 }
 
-.tab-btn.active {
-  background: white;
-  color: #0f0c29;
-  border-color: white;
-  box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
-}
-
-.tab-btn:active {
+.filter-btn:active {
   transform: scale(0.95);
 }
 
-/* Skeleton Loading (Pro Max фича) */
+.filter-btn.active {
+  background: linear-gradient(90deg, #3b82f6 0%, #8b5cf6 100%);
+  color: white;
+  border-color: transparent;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+/* Контент */
+.home-content {
+  flex: 1;
+  padding: 16px;
+  overflow-y: auto;
+}
+
+/* Skeleton Loading */
+.skeleton-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
 .skeleton-card {
-  height: 260px;
-  background: linear-gradient(90deg, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.05) 75%);
+  height: 200px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.05) 25%, rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0.05) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
-  border-radius: 24px;
-  margin-bottom: 20px;
+  border-radius: 16px;
 }
 
 @keyframes shimmer {
@@ -70,19 +135,68 @@
   100% { background-position: -200% 0; }
 }
 
-.empty-state {
+/* Error State */
+.error-state, .empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 24px;
   text-align: center;
-  padding: 60px 20px;
-  color: rgba(255, 255, 255, 0.6);
+  min-height: 400px;
+}
+
+.error-state svg {
+  color: #ef4444;
+  margin-bottom: 16px;
+}
+
+.empty-state svg {
+  color: #3b82f6;
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+.error-title, .empty-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 8px 0;
+}
+
+.error-text, .empty-text {
+  font-size: 14px;
+  color: #64748b;
+  margin: 0 0 24px 0;
+  line-height: 1.5;
 }
 
 .retry-btn {
-  margin-top: 16px;
   padding: 12px 24px;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: linear-gradient(90deg, #3b82f6 0%, #8b5cf6 100%);
   color: white;
+  border: none;
   border-radius: 12px;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
+  transition: transform 0.15s;
+}
+
+.retry-btn:active {
+  transform: scale(0.95);
+}
+
+/* Games Grid */
+.games-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+@media (min-width: 768px) {
+  .games-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
