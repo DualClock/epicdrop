@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import GameCard from '../components/GameCard';
 import './Home.css';
 
-const API_BASE = 'http://localhost:5199/api/Giveaway';
+const API_BASE = import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL}/Giveaway` : 'http://localhost:5199/api/Giveaway';
 
 const Home = () => {
   const navigate = useNavigate();
