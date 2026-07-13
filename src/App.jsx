@@ -1,31 +1,18 @@
-import { useState, useEffect } from 'react';
-import WelcomeScreen from './components/WelcomeScreen/WelcomeScreen';
-import './App.css';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Welcome from './pages/Welcome';
+import Home from './pages/Home';
+import './index.css'; // Глобальные стили
 
 function App() {
-  const [showWelcome, setShowWelcome] = useState(true);
-
-  useEffect(() => {
-    if (window.Telegram?.WebApp) {
-      const tg = window.Telegram.WebApp;
-      tg.ready();
-      tg.expand();
-      tg.setHeaderColor('#f8f4ff');
-      tg.setBackgroundColor('#f8f4ff');
-    }
-  }, []);
-
   return (
-    <div className="app">
-      {showWelcome ? (
-        <WelcomeScreen onContinue={() => setShowWelcome(false)} />
-      ) : (
-        <main className="main-app">
-          <h1>EpicDrop</h1>
-          <p>Здесь будет список раздач игр</p>
-        </main>
-      )}
-    </div>
+    <Router>
+      <Routes>
+        {/* По умолчанию открываем Welcome */}
+        <Route path="/" element={<Welcome />} />
+        {/* После нажатия кнопки переходим сюда */}
+        <Route path="/home" element={<Home />} />
+      </Routes>
+    </Router>
   );
 }
 

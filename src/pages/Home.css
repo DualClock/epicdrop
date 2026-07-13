@@ -1,0 +1,88 @@
+.home-container {
+  min-height: 100vh;
+  background: #0f0c29;
+  color: white;
+  font-family: 'Inter', sans-serif;
+  padding: 20px;
+  padding-bottom: 40px;
+}
+
+.home-header {
+  margin-bottom: 24px;
+}
+
+.home-header h1 {
+  font-size: 28px;
+  font-weight: 800;
+  margin: 0 0 8px 0;
+}
+
+.home-header p {
+  color: rgba(255, 255, 255, 0.6);
+  margin: 0;
+  font-size: 15px;
+}
+
+.tabs-container {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.tab-btn {
+  padding: 10px 20px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+
+.tab-btn.active {
+  background: white;
+  color: #0f0c29;
+  border-color: white;
+  box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
+}
+
+.tab-btn:active {
+  transform: scale(0.95);
+}
+
+/* Skeleton Loading (Pro Max фича) */
+.skeleton-card {
+  height: 260px;
+  background: linear-gradient(90deg, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.05) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 24px;
+  margin-bottom: 20px;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.retry-btn {
+  margin-top: 16px;
+  padding: 12px 24px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}

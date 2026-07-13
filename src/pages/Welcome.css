@@ -1,0 +1,183 @@
+:root {
+  --text-hi: #ffffff;
+  --text-mid: #94a3b8;
+  --text-low: #64748b;
+  --font-display: 'Unbounded', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+  --accent: #3b82f6;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  margin: 0;
+  background: #0f172a;
+  font-family: var(--font-body);
+}
+
+.welcome {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  /* Твой сгенерированный фон */
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.7) 0%, rgba(15, 23, 42, 0.9) 100%),
+              url('/welcome-bg.png') no-repeat center center;
+  background-size: cover;
+  overflow: hidden;
+}
+
+/* Лёгкое свечение для иконок на фоне */
+@keyframes glow {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+/* Контент по центру */
+.hero-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 24px;
+  text-align: center;
+}
+
+/* Логотип EasyDrop */
+.logo-container {
+  margin-bottom: 16px;
+}
+
+.logo {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+  border-radius: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 20px 40px rgba(59, 130, 246, 0.3);
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+.logo svg {
+  width: 44px;
+  height: 44px;
+  fill: white;
+}
+
+.brand__name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 32px;
+  color: var(--text-hi);
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+/* Нижняя панель */
+.sheet {
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0) 0%, #0f172a 40%);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 32px 32px 0 0;
+  padding: 32px 24px 40px;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.tagline {
+  margin: 0 0 24px;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--text-mid);
+  text-align: center;
+}
+
+.features {
+  list-style: none;
+  margin: 0 0 28px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.features li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 15px;
+  color: var(--text-hi);
+}
+
+.features li svg {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+}
+
+.cta {
+  width: 100%;
+  border: none;
+  border-radius: 16px;
+  padding: 18px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 16px;
+  color: #0f172a;
+  background: linear-gradient(90deg, #3b82f6 0%, #8b5cf6 100%);
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+  box-shadow: 0 10px 30px rgba(59, 130, 246, 0.3);
+}
+
+.cta:active {
+  transform: scale(0.97);
+  box-shadow: 0 5px 15px rgba(59, 130, 246, 0.2);
+}
+
+.fineprint {
+  margin: 16px 0 0;
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-low);
+}
+
+/* Адаптация под маленькие экраны */
+@media (max-height: 700px) {
+  .hero-content {
+    padding: 20px 24px;
+  }
+  
+  .logo {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .logo svg {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .brand__name {
+    font-size: 26px;
+  }
+  
+  .sheet {
+    padding: 24px 20px 32px;
+  }
+}
