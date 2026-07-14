@@ -3,140 +3,254 @@ import { useNavigate } from 'react-router-dom';
 import GameCard from '../components/GameCard';
 import './Home.css';
 
-const API_BASE = 'http://localhost:5199/api/Giveaway';
+const API_BASE = 'https://epicdropapitma-production.up.railway.app/api';
 
 const Home = () => {
   const navigate = useNavigate();
   const [games, setGames] = useState([]);
+  const [wishlist, setWishlist] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [activeFilter, setActiveFilter] = useState('all'); // 'all', 'steam', 'epic'
+  const [activeTab, setActiveTab] = useState('all'); // 'all', 'free', 'steam', 'epic'
+  const [user, setUser] = useState(null);
+  const [showWishlist, setShowWishlist] = useState(false);
 
   useEffect(() => {
     // Инициализация Telegram WebApp
     if (window.Telegram?.WebApp) {
       window.Telegram.WebApp.ready();
       window.Telegram.WebApp.expand();
-      window.Telegram.WebApp.setHeaderColor('#0f172a');
+      
+      // Получаем данные пользователя из Telegram
+      const tgUser = window.Telegram.WebApp.initDataUnsafe?.user;
+      if (tgUser) {
+        registerUser(tgUser);
+      }
     }
     
     fetchGames();
   }, []);
 
+  // Регистрация/вход пользователя
+  const registerUser = async (tgUser) => {
+    try {
+      const response = await fetch(`${API_BASE}/User/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          TelegramId: tgUser.id,
+          Username: tgUser.username,
+          FirstName: tgUser.first_name
+        })
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        setUser({ id: data.userId, ...tgUser });
+        fetchWishlist(tgUser.id);
+      }
+    } catch (error) {
+      console.error('Registration error:', error);
+    }
+  };
+
+  // Получение игр по категориям
   const fetchGames = async () => {
     setLoading(true);
-    setError(null);
-    
     try {
-      const endpoint = activeFilter === 'all' 
-        ? `${API_BASE}/all`
-        : `${API_BASE}/${activeFilter}/all`;
+      const response = await fetch(`${API_BASE}/Giveaway/categories`);
+      const data = await response.json();
       
-      const response = await fetch(endpoint);
+      let gamesToDisplay = [];
       
-      if (!response.ok) {
-        throw new Error('Не удалось загрузить данные');
+      switch (activeTab) {
+        case 'free':
+          gamesToDisplay = data.freeGames || [];
+          break;
+        case 'steam':
+          gamesToDisplay = (data.allGames || []).filter(g => g.Store === 'Steam');
+          break;
+        case 'epic':
+          gamesToDisplay = (data.allGames || []).filter(g => g.Store === 'Epic Games');
+          break;
+        default:
+          gamesToDisplay = data.allGames || [];
       }
       
-      const data = await response.json();
-      setGames(data);
-    } catch (err) {
-      setError(err.message);
-      console.error('Ошибка загрузки:', err);
+      setGames(gamesToDisplay);
+    } catch (error) {
+      console.error('Error fetching games:', error);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleFilterChange = (filter) => {
-    setActiveFilter(filter);
+  // Получение вишлиста
+  const fetchWishlist = async (telegramId) => {
+    try {
+      const response = await fetch(`${API_BASE}/User/${telegramId}/wishlist`);
+      if (response.ok) {
+        const data = await response.json();
+        setWishlist(data);
+      }
+    } catch (error) {
+      console.error('Error fetching wishlist:', error);
+    }
+  };
+
+  // Добавление в вишлист
+  const addToWishlist = async (game) => {
+    if (!user) {
+      alert('Сначала войдите в приложение');
+      return;
+    }
+
+    try {
+      const response = await fetch(`${API_BASE}/User/${user.id}/wishlist`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          GameTitle: game.title,
+          Store: game.store,
+          GameUrl: game.storeUrl,
+          NotifyOnFree: true
+        })
+      });
+
+      if (response.ok) {
+        fetchWishlist(user.id);
+        if (window.Telegram?.WebApp?.HapticFeedback) {
+          window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
+        }
+      }
+    } catch (error) {
+      console.error('Error adding to wishlist:', error);
+    }
+  };
+
+  // Удаление из вишлиста
+  const removeFromWishlist = async (gameTitle) => {
+    if (!user) return;
+
+    try {
+      const response = await fetch(`${API_BASE}/User/${user.id}/wishlist/${encodeURIComponent(gameTitle)}`, {
+        method: 'DELETE'
+      });
+
+      if (response.ok) {
+        fetchWishlist(user.id);
+      }
+    } catch (error) {
+      console.error('Error removing from wishlist:', error);
+    }
+  };
+
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
     if (window.Telegram?.WebApp?.HapticFeedback) {
       window.Telegram.WebApp.HapticFeedback.selectionChanged();
     }
   };
 
-  const handleBack = () => {
-    if (window.Telegram?.WebApp?.HapticFeedback) {
-      window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
-    }
-    navigate('/');
-  };
-
   return (
     <div className="home">
-      {/* Хедер */}
+      {/* Header */}
       <header className="home-header">
-        <button className="back-btn" onClick={handleBack}>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-            <path d="M19 12H5M12 19l-7-7 7-7" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-        </button>
-        
         <div className="header-content">
-          <h1 className="header-title">🔥 Раздачи</h1>
-          <p className="header-subtitle">Успей забрать, пока не удалили</p>
+          <h1 className="header-title">
+            {showWishlist ? '❤️ Мой вишлист' : ' EasyDrop'}
+          </h1>
+          <p className="header-subtitle">
+            {showWishlist ? `${wishlist.length} игр в списке` : 'Лови раздачи и скидки'}
+          </p>
         </div>
         
-        <button className="refresh-btn" onClick={fetchGames} disabled={loading}>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className={loading ? 'spinning' : ''}>
-            <path d="M23 4v6h-6M1 20v-6h6" strokeLinecap="round" strokeLinejoin="round"/>
-            <path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
+        <button 
+          className="wishlist-btn"
+          onClick={() => {
+            setShowWishlist(!showWishlist);
+            if (!showWishlist && user) fetchWishlist(user.id);
+          }}
+        >
+          ❤️
+          {wishlist.length > 0 && <span className="wishlist-count">{wishlist.length}</span>}
         </button>
       </header>
 
-      {/* Фильтры */}
-      <div className="filters">
-        <button 
-          className={`filter-btn ${activeFilter === 'all' ? 'active' : ''}`}
-          onClick={() => handleFilterChange('all')}
-        >
-          Все
-        </button>
-        <button 
-          className={`filter-btn ${activeFilter === 'steam' ? 'active' : ''}`}
-          onClick={() => handleFilterChange('steam')}
-        >
-          🎮 Steam
-        </button>
-        <button 
-          className={`filter-btn ${activeFilter === 'epic' ? 'active' : ''}`}
-          onClick={() => handleFilterChange('epic')}
-        >
-          🎯 Epic
-        </button>
-      </div>
+      {/* Tabs */}
+      {!showWishlist && (
+        <div className="tabs-container">
+          <button 
+            className={`tab-btn ${activeTab === 'all' ? 'active' : ''}`}
+            onClick={() => handleTabChange('all')}
+          >
+            🎮 Все
+          </button>
+          <button 
+            className={`tab-btn ${activeTab === 'free' ? 'active' : ''}`}
+            onClick={() => handleTabChange('free')}
+          >
+            🎁 Раздачи
+          </button>
+          <button 
+            className={`tab-btn ${activeTab === 'steam' ? 'active' : ''}`}
+            onClick={() => handleTabChange('steam')}
+          >
+            🎮 Steam
+          </button>
+          <button 
+            className={`tab-btn ${activeTab === 'epic' ? 'active' : ''}`}
+            onClick={() => handleTabChange('epic')}
+          >
+            🎯 Epic
+          </button>
+        </div>
+      )}
 
-      {/* Контент */}
+      {/* Content */}
       <div className="home-content">
         {loading ? (
           <div className="skeleton-list">
             {[1, 2, 3].map(i => <div key={i} className="skeleton-card"></div>)}
           </div>
-        ) : error ? (
-          <div className="error-state">
-            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-              <circle cx="12" cy="12" r="10" stroke="#ef4444"/>
-              <path d="M12 8v4M12 16h.01" stroke="#ef4444" strokeLinecap="round"/>
-            </svg>
-            <p className="error-title">Не удалось загрузить раздачи</p>
-            <p className="error-text">{error}</p>
-            <button className="retry-btn" onClick={fetchGames}>
-              Попробовать снова
-            </button>
-          </div>
+        ) : showWishlist ? (
+          wishlist.length === 0 ? (
+            <div className="empty-state">
+              <p className="empty-title">Вишлист пуст</p>
+              <p className="empty-text">Добавляй игры, чтобы получать уведомления о раздачах!</p>
+              <button className="cta-btn" onClick={() => setShowWishlist(false)}>
+                Перейти к играм
+              </button>
+            </div>
+          ) : (
+            <div className="games-grid">
+              {wishlist.map((item, index) => (
+                <GameCard 
+                  key={index} 
+                  game={{
+                    title: item.gameTitle,
+                    store: item.store,
+                    storeUrl: item.gameUrl,
+                    endDate: null
+                  }}
+                  isInWishlist={true}
+                  onRemove={removeFromWishlist}
+                />
+              ))}
+            </div>
+          )
         ) : games.length === 0 ? (
           <div className="empty-state">
-            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-              <path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-            <p className="empty-title">Пока нет активных раздач</p>
+            <p className="empty-title">Пока нет игр</p>
             <p className="empty-text">Загляни позже — мы постоянно обновляем каталог</p>
           </div>
         ) : (
           <div className="games-grid">
             {games.map((game, index) => (
-              <GameCard key={index} game={game} />
+              <GameCard 
+                key={index} 
+                game={game}
+                onAddToWishlist={addToWishlist}
+              />
             ))}
           </div>
         )}

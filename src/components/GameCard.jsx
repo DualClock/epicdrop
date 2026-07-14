@@ -1,15 +1,27 @@
 import './GameCard.css';
 
-const GameCard = ({ game }) => {
+const GameCard = ({ game, isInWishlist = false, onAddToWishlist, onRemove }) => {
   const handleClick = () => {
-    // Вибрация при нажатии
     if (window.Telegram?.WebApp?.HapticFeedback) {
       window.Telegram.WebApp.HapticFeedback.impactOccurred('medium');
     }
     
-    // Открываем ссылку на игру
     if (game.storeUrl) {
       window.open(game.storeUrl, '_blank');
+    }
+  };
+
+  const handleAddToWishlist = (e) => {
+    e.stopPropagation();
+    if (onAddToWishlist) {
+      onAddToWishlist(game);
+    }
+  };
+
+  const handleRemove = (e) => {
+    e.stopPropagation();
+    if (onRemove) {
+      onRemove(game.title);
     }
   };
 
@@ -29,13 +41,9 @@ const GameCard = ({ game }) => {
   };
 
   const getStoreIcon = (store) => {
-    if (store?.toLowerCase() === 'steam') return '🎮';
-    if (store?.toLowerCase() === 'epic') return '';
+    if (store?.toLowerCase() === 'steam') return '';
+    if (store?.toLowerCase() === 'epic') return '🎯';
     return '🎁';
-  };
-
-  const getStoreName = (store) => {
-    return store || 'Unknown';
   };
 
   return (
@@ -51,13 +59,11 @@ const GameCard = ({ game }) => {
         />
         <div className="card-overlay"></div>
         
-        {/* Бейдж магазина */}
         <div className={`store-badge ${game.store?.toLowerCase() === 'steam' ? 'steam' : 'epic'}`}>
           <span className="store-icon">{getStoreIcon(game.store)}</span>
-          <span className="store-name">{getStoreName(game.store)}</span>
+          <span className="store-name">{game.store}</span>
         </div>
 
-        {/* Бейдж "FREE" */}
         <div className="free-badge">FREE</div>
       </div>
 
@@ -73,7 +79,15 @@ const GameCard = ({ game }) => {
             <span>{formatDate(game.endDate)}</span>
           </div>
           
-          <button className="claim-btn">Забрать</button>
+          {isInWishlist ? (
+            <button className="remove-btn" onClick={handleRemove}>
+              Удалить
+            </button>
+          ) : (
+            <button className="wishlist-add-btn" onClick={handleAddToWishlist}>
+              ❤️ В вишлист
+            </button>
+          )}
         </div>
       </div>
     </div>

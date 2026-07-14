@@ -7,53 +7,18 @@
   flex-direction: column;
 }
 
-/* Хедер */
+/* Header */
 .home-header {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   padding: 16px;
-  gap: 12px;
   background: rgba(15, 23, 42, 0.95);
   backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   position: sticky;
   top: 0;
   z-index: 10;
-}
-
-.back-btn, .refresh-btn {
-  width: 40px;
-  height: 40px;
-  border: none;
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #94a3b8;
-  cursor: pointer;
-  transition: all 0.2s;
-  flex-shrink: 0;
-}
-
-.back-btn:active, .refresh-btn:active {
-  transform: scale(0.95);
-  background: rgba(255, 255, 255, 0.12);
-}
-
-.refresh-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.spinning {
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
 }
 
 .header-content {
@@ -65,7 +30,9 @@
   font-size: 20px;
   font-weight: 700;
   margin: 0 0 4px 0;
-  color: #ffffff;
+  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .header-subtitle {
@@ -74,8 +41,43 @@
   margin: 0;
 }
 
-/* Фильтры */
-.filters {
+/* Wishlist Button */
+.wishlist-btn {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  border: none;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.wishlist-btn:active {
+  transform: scale(0.95);
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.wishlist-count {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: #ef4444;
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 5px;
+  border-radius: 10px;
+  min-width: 16px;
+  text-align: center;
+}
+
+/* Tabs */
+.tabs-container {
   display: flex;
   gap: 8px;
   padding: 16px;
@@ -84,7 +86,7 @@
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.filter-btn {
+.tab-btn {
   padding: 10px 18px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   background: rgba(255, 255, 255, 0.05);
@@ -97,25 +99,32 @@
   transition: all 0.2s;
 }
 
-.filter-btn:active {
+.tab-btn:active {
   transform: scale(0.95);
 }
 
-.filter-btn.active {
+.tab-btn.active {
   background: linear-gradient(90deg, #3b82f6 0%, #8b5cf6 100%);
   color: white;
   border-color: transparent;
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
-/* Контент */
+/* Content */
 .home-content {
   flex: 1;
   padding: 16px;
   overflow-y: auto;
 }
 
-/* Skeleton Loading */
+/* Games Grid */
+.games-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Skeleton */
 .skeleton-list {
   display: flex;
   flex-direction: column;
@@ -135,8 +144,8 @@
   100% { background-position: -200% 0; }
 }
 
-/* Error State */
-.error-state, .empty-state {
+/* Empty State */
+.empty-state {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -146,32 +155,21 @@
   min-height: 400px;
 }
 
-.error-state svg {
-  color: #ef4444;
-  margin-bottom: 16px;
-}
-
-.empty-state svg {
-  color: #3b82f6;
-  margin-bottom: 16px;
-  opacity: 0.5;
-}
-
-.error-title, .empty-title {
+.empty-title {
   font-size: 18px;
   font-weight: 700;
   color: #ffffff;
   margin: 0 0 8px 0;
 }
 
-.error-text, .empty-text {
+.empty-text {
   font-size: 14px;
   color: #64748b;
   margin: 0 0 24px 0;
   line-height: 1.5;
 }
 
-.retry-btn {
+.cta-btn {
   padding: 12px 24px;
   background: linear-gradient(90deg, #3b82f6 0%, #8b5cf6 100%);
   color: white;
@@ -180,20 +178,9 @@
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: transform 0.15s;
 }
 
-.retry-btn:active {
-  transform: scale(0.95);
-}
-
-/* Games Grid */
-.games-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
+/* Адаптация */
 @media (min-width: 768px) {
   .games-grid {
     display: grid;
